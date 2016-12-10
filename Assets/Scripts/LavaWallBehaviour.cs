@@ -5,6 +5,7 @@ using UnityEngine;
 public class LavaWallBehaviour : MonoBehaviour {
 
     public float wallSpeed = 0.1f;
+    public bool stop = false;
 
     private Vector3 wallMove;
 
@@ -17,7 +18,10 @@ public class LavaWallBehaviour : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        Move();
+        if(!stop)
+        {
+            Move();
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -31,5 +35,15 @@ public class LavaWallBehaviour : MonoBehaviour {
     void Move()
     {
         transform.position += wallMove;
+    }
+
+    public void Activate()
+    {
+        stop = false;
+    }
+
+    public void Desactivate()
+    {
+        stop = true;
     }
 }
