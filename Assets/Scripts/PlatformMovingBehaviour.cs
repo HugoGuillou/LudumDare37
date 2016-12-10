@@ -10,6 +10,7 @@ public class PlatformMovingBehaviour : MonoBehaviour {
     public bool stop = false;
 
     private Vector3 platformMove;
+    private Transform centre;
 
     // Use this for initialization
     void Start () {
@@ -21,6 +22,7 @@ public class PlatformMovingBehaviour : MonoBehaviour {
         {
             platformMove = new Vector3(movingSpeed, 0f, 0f);
         }
+        centre = transform.parent.transform;
     }
 	
 	// Update is called once per frame
@@ -35,13 +37,13 @@ public class PlatformMovingBehaviour : MonoBehaviour {
     {
         if (moveVertical)
         {
-            if (transform.position.y <= -distance)
+            if (transform.position.y <= centre.position.y-distance)
             {
                 platformMove = new Vector3(0f, movingSpeed, 0f);
             }
             else
             {
-                if (transform.position.y >= distance)
+                if (transform.position.y >= centre.position.y+distance)
                 {
                     platformMove = new Vector3(0f, -movingSpeed, 0f);
                 }
@@ -49,13 +51,13 @@ public class PlatformMovingBehaviour : MonoBehaviour {
         }
         else
         {
-            if(transform.position.x <= -distance)
+            if(transform.position.x <= centre.position.x-distance)
             {
                 platformMove = new Vector3(movingSpeed, 0f, 0f);
             }
             else
             {
-                if (transform.position.x >= distance)
+                if (transform.position.x >= centre.position.y+distance)
                 {
                     platformMove = new Vector3(-movingSpeed, 0f, 0f);
                 }
