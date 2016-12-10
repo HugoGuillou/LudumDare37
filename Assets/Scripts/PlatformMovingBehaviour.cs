@@ -67,4 +67,14 @@ public class PlatformMovingBehaviour : MonoBehaviour {
 
         transform.position += platformMove;
     }
+
+    public void Activate()
+    {
+        stop = false;
+    }
+
+    public void Desactivate()
+    {
+        stop = true;
+    }
 }
