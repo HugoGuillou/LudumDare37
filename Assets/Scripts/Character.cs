@@ -120,7 +120,7 @@ using UnityEngine;
                 }
             }
             // If the player should jump...
-            if ((m_Grounded || m_TouchWall) && jump && m_Anim.GetBool("Ground"))
+            if ((m_Grounded || m_TouchWall) && jump )
             {
                 // Add a vertical force to the player.
                 m_Grounded = false;
