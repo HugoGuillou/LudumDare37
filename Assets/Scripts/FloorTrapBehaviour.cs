@@ -6,9 +6,11 @@ public class FloorTrapBehaviour : MonoBehaviour {
 
     public float floorTrapDelay = 1.0f;
 
+    private float time;
+
 	// Use this for initialization
 	void Start () {
-		
+        time = 0f;
 	}
 	
 	// Update is called once per frame
@@ -16,18 +18,27 @@ public class FloorTrapBehaviour : MonoBehaviour {
 		
 	}
 
-    void OnCollisionEnter2D(Collision2D coll)
+    void OnCollisionStay2D(Collision2D coll)
     {
+        Debug.Log("B" + time);
         if (coll.gameObject.tag == "Player")
         {
-            KillPlayer(coll.gameObject);
+            time += Time.deltaTime;
+            if(time >= floorTrapDelay)
+            {
+                Destroy(coll.gameObject);
+                //playSound
+                //VisualFeedback
+            }
         }
     }
 
-    void KillPlayer(GameObject Player)
+    void OnCollisionExit2D(Collision2D info)
     {
-        Destroy(Player, floorTrapDelay);
-        //playSound
-        //VisualFeedback
+        Debug.Log("A" + time);
+        if(info.transform.CompareTag("Player"))
+        {
+            time = 0f;
+        }
     }
 }
