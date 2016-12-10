@@ -19,7 +19,7 @@ public class TrapArrowBehaviour : MonoBehaviour {
     {
         if (coll.gameObject.tag == "Player")
         {
-            
+            arrows.GetComponent<ArrowBehaviour>().Activate();
         }
     }
 }
