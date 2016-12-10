@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlatformBrokenBehaviour : MonoBehaviour {
+public class TrapArrowBehaviour : MonoBehaviour {
 
-    public float plateformBrokenDuration = 1.0f;
-
+    private Transform arrows;
 	// Use this for initialization
 	void Start () {
-		
-	}
+		arrows = transform.GetChild(0);
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -20,14 +19,7 @@ public class PlatformBrokenBehaviour : MonoBehaviour {
     {
         if (coll.gameObject.tag == "Player")
         {
-            Disapear();
+            
         }
-    }
-
-    void Disapear()
-    {
-        //Feedback visuel
-        //PlaySound
-        Destroy(gameObject, plateformBrokenDuration);
     }
 }

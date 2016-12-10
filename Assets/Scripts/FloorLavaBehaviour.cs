@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlatformBrokenBehaviour : MonoBehaviour {
-
-    public float plateformBrokenDuration = 1.0f;
+public class FloorLavaBehaviour : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -20,14 +18,7 @@ public class PlatformBrokenBehaviour : MonoBehaviour {
     {
         if (coll.gameObject.tag == "Player")
         {
-            Disapear();
+            Destroy(coll.gameObject);
         }
-    }
-
-    void Disapear()
-    {
-        //Feedback visuel
-        //PlaySound
-        Destroy(gameObject, plateformBrokenDuration);
     }
 }
