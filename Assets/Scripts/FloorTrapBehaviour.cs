@@ -26,6 +26,8 @@ public class FloorTrapBehaviour : MonoBehaviour {
 
     void KillPlayer(GameObject Player)
     {
-
+        Destroy(Player, floorTrapDelay);
+        //playSound
+        //VisualFeedback
     }
 }
