@@ -12,19 +12,29 @@ using UnityEngine;
 
         private Transform m_GroundCheck;    // A position marking where to check if the player is grounded.
         const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
+
         private bool m_Grounded;   
-        private bool m_DoubleJump;         // Whether or not the player is grounded.
+        private bool m_CanDoubleJump;         // Whether or not the player is grounded.
+
         private Transform m_CeilingCheck;   // A position marking where to check for ceilings
         const float k_CeilingRadius = .01f; // Radius of the overlap circle to determine if the player can stand up
+
+        private Transform m_WallCheck;    // A position marking where to check if the player is grounded.
+        //const Vector3 k_WallSize = new Vector3(0.2f, 0.2f,0); // Radius of the overlap circle to determine if grounded
+
         private Animator m_Anim;            // Reference to the player's animator component.
         private Rigidbody2D m_Rigidbody2D;
         private bool m_FacingRight = true;  // For determining which way the player is currently facing.
+
+        private bool m_TouchWall = false;
 
         private void Awake()
         {
             // Setting up references.
             m_GroundCheck = transform.Find("GroundCheck");
             m_CeilingCheck = transform.Find("CeilingCheck");
+            m_WallCheck = transform.Find("WallCheck");
+
             m_Anim = GetComponent<Animator>();
             m_Rigidbody2D = GetComponent<Rigidbody2D>();
         }
@@ -33,16 +43,28 @@ using UnityEngine;
         private void FixedUpdate()
         {
             m_Grounded = false;
+            m_TouchWall = false;
 
             // The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
             // This can be done using layers instead but Sample Assets will not overwrite your project settings.
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
-            for (int i = 0; i < colliders.Length; i++)
+            Collider2D[] colliders_floor = Physics2D.OverlapCircleAll(m_GroundCheck.position, m_GroundCheck.localScale.x, m_WhatIsGround);
+            for (int i = 0; i < colliders_floor.Length; i++)
             {
-                if (colliders[i].gameObject != gameObject)
+                if (colliders_floor[i].gameObject != gameObject)
                 {
                     m_Grounded = true;
-                    m_DoubleJump = false;
+                    m_CanDoubleJump = true;
+                }
+            }
+
+            Collider2D[] colliders_wall  = Physics2D.OverlapBoxAll(m_WallCheck.position, m_WallCheck.localScale, m_WhatIsGround);
+            for (int i = 0; i < colliders_wall.Length; i++)
+            {
+                if(colliders_wall[i].gameObject != gameObject && !Input.GetKeyDown(KeyCode.LeftArrow) && !Input.GetKeyDown(KeyCode.RightArrow))
+                {
+                    Debug.Log("YAY");
+                    m_TouchWall = true;
+                    m_CanDoubleJump = false;
                 }
             }
             m_Anim.SetBool("Ground", m_Grounded);
@@ -63,6 +85,10 @@ using UnityEngine;
                     crouch = true;
                 }
             }
+
+
+            
+   
 
             // Set whether or not the character is crouching in the animator
             m_Anim.SetBool("Crouch", crouch);
@@ -94,7 +120,7 @@ using UnityEngine;
                 }
             }
             // If the player should jump...
-            if (m_Grounded && jump && m_Anim.GetBool("Ground"))
+            if ((m_Grounded || m_TouchWall) && jump && m_Anim.GetBool("Ground"))
             {
                 // Add a vertical force to the player.
                 m_Grounded = false;
@@ -102,16 +128,41 @@ using UnityEngine;
                 m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
             }
 
-            else if(!m_Grounded && jump && !m_DoubleJump)
+            else if(!m_Grounded && m_TouchWall)
+            {
+                m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, 0);
+            }
+
+            else if(!m_Grounded && !m_TouchWall && jump && m_CanDoubleJump)
             {
                 m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
                 Vector3 new_vel = new Vector3(m_Rigidbody2D.velocity.x, 0);
                 m_Rigidbody2D.velocity = new_vel;
-                m_DoubleJump = true;
+                m_CanDoubleJump = false;
                 Debug.Log("double jump");
             }
+
+
+
         }
 
+
+        void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+
+            Vector3 ground_transform_pos = transform.Find("GroundCheck").position; 
+            float ground_transform_scale = transform.Find("GroundCheck").localScale.x;
+            Gizmos.DrawWireSphere(ground_transform_pos, ground_transform_scale);
+
+            Vector3 wall_check_pos = transform.Find("WallCheck").position;
+            Vector3 wall_check_scale = transform.Find("WallCheck").localScale;
+            Gizmos.DrawWireCube(wall_check_pos, wall_check_scale);
+
+            
+
+
+        }
 
         private void Flip()
         {
