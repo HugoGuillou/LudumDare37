@@ -8,21 +8,37 @@ public class PlatformMovingBehaviour : MonoBehaviour {
     public float movingSpeed = 0.1f;
     public bool moveVertical = false;
     public bool stop = false;
+    public bool invert = false;
 
     private Vector3 platformMove;
     private Transform centre;
 
     // Use this for initialization
     void Start () {
-        if(moveVertical)
+        if (invert)
         {
-            platformMove = new Vector3(0f, movingSpeed, 0f);
+            if (moveVertical)
+            {
+                platformMove = new Vector3(0f, -movingSpeed, 0f);
+            }
+            else
+            {
+                platformMove = new Vector3(-movingSpeed, 0f, 0f);
+            }
+            centre = transform.parent.transform;
         }
         else
         {
-            platformMove = new Vector3(movingSpeed, 0f, 0f);
+            if (moveVertical)
+            {
+                platformMove = new Vector3(0f, movingSpeed, 0f);
+            }
+            else
+            {
+                platformMove = new Vector3(movingSpeed, 0f, 0f);
+            }
+            centre = transform.parent.transform;
         }
-        centre = transform.parent.transform;
     }
 	
 	// Update is called once per frame
