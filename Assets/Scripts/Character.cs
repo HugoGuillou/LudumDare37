@@ -13,7 +13,8 @@ using UnityEngine;
         private Transform m_GroundCheck;    // A position marking where to check if the player is grounded.
         const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
 
-        private bool m_Grounded;   
+        private bool m_Grounded; 
+        private bool m_CanJump;         // Whether or not the player is grounded.          
         private bool m_CanDoubleJump;         // Whether or not the player is grounded.
 
         private Transform m_CeilingCheck;   // A position marking where to check for ceilings
@@ -44,25 +45,25 @@ using UnityEngine;
         {
             m_Grounded = false;
             m_TouchWall = false;
-
+            Debug.Log(m_GroundCheck.localScale.x * transform.localScale.x);
             // The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
             // This can be done using layers instead but Sample Assets will not overwrite your project settings.
-            Collider2D[] colliders_floor = Physics2D.OverlapCircleAll(m_GroundCheck.position, m_GroundCheck.localScale.x, m_WhatIsGround);
+            Collider2D[] colliders_floor = Physics2D.OverlapCircleAll(m_GroundCheck.position, Mathf.Abs(m_GroundCheck.localScale.x * transform.localScale.x), m_WhatIsGround);
             for (int i = 0; i < colliders_floor.Length; i++)
             {
                 if (colliders_floor[i].gameObject != gameObject)
                 {
+                   
                     m_Grounded = true;
                     m_CanDoubleJump = true;
                 }
             }
 
-            Collider2D[] colliders_wall  = Physics2D.OverlapBoxAll(m_WallCheck.position, m_WallCheck.localScale, m_WhatIsGround);
+            Collider2D[] colliders_wall  = Physics2D.OverlapBoxAll(m_WallCheck.position, Vector3.Scale(m_WallCheck.localScale, transform.localScale), m_WhatIsGround);
             for (int i = 0; i < colliders_wall.Length; i++)
             {
                 if(colliders_wall[i].gameObject != gameObject && !Input.GetKeyDown(KeyCode.LeftArrow) && !Input.GetKeyDown(KeyCode.RightArrow))
                 {
-                    Debug.Log("YAY");
                     m_TouchWall = true;
                     m_CanDoubleJump = false;
                 }
@@ -123,16 +124,26 @@ using UnityEngine;
             if ((m_Grounded || m_TouchWall) && jump )
             {
                 // Add a vertical force to the player.
+                Debug.Log("Jump");
                 m_Grounded = false;
                 m_Anim.SetBool("Ground", false);
                 m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
             }
 
+            // Wall Grab
             else if(!m_Grounded && m_TouchWall)
             {
                 m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, 0);
+                Debug.Log("Grab");
+
+                if(jump)
+                {
+                    Debug.Log("WallJump");
+                    m_Rigidbody2D.AddForce(new Vector2(m_JumpForce, m_JumpForce));
+                }
             }
 
+            //Double Jump
             else if(!m_Grounded && !m_TouchWall && jump && m_CanDoubleJump)
             {
                 m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
@@ -141,6 +152,8 @@ using UnityEngine;
                 m_CanDoubleJump = false;
                 Debug.Log("double jump");
             }
+
+            Debug.Log("Ground " + m_Grounded);
 
 
 
@@ -152,13 +165,13 @@ using UnityEngine;
             Gizmos.color = Color.red;
 
             Vector3 ground_transform_pos = transform.Find("GroundCheck").position; 
-            float ground_transform_scale = transform.Find("GroundCheck").localScale.x;
+            float ground_transform_scale = transform.Find("GroundCheck").localScale.x * transform.localScale.x;
             Gizmos.DrawWireSphere(ground_transform_pos, ground_transform_scale);
 
             Vector3 wall_check_pos = transform.Find("WallCheck").position;
-            Vector3 wall_check_scale = transform.Find("WallCheck").localScale;
+            Vector3 wall_check_scale = Vector3.Scale(transform.Find("WallCheck").localScale,transform.localScale);
             Gizmos.DrawWireCube(wall_check_pos, wall_check_scale);
-
+            print(transform.Find("GroundCheck").localScale.x * transform.localScale.x);
             
 
 
