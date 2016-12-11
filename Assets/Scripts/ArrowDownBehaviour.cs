@@ -5,11 +5,13 @@ using UnityEngine;
 public class ArrowDownBehaviour : MonoBehaviour {
     
     public float arrowSpeed = 0.1f;
+    public LevelManager levelManager;
 
     private Vector3 movement;
 
 	// Use this for initialization
 	void Start () {
+        levelManager = FindObjectOfType<LevelManager>();
         movement = new Vector3(0f, -arrowSpeed, 0f);
 	}
 	
@@ -25,10 +27,10 @@ public class ArrowDownBehaviour : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D coll)
     {
+        Destroy(gameObject);
         if (coll.gameObject.tag == "Player")
         {
-            Destroy(coll.gameObject);
+            levelManager.RespawnPlayer();
         }
-        Destroy(gameObject);
     }
 }

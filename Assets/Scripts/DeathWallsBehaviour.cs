@@ -6,11 +6,13 @@ public class DeathWallsBehaviour : MonoBehaviour {
 
     public float wallSpeed = 0.1f;
     public bool stop = false;
+    public LevelManager levelManager;
 
     private Vector3 wallMove;
 
 	// Use this for initialization
 	void Start () {
+        levelManager = FindObjectOfType<LevelManager>();
         wallMove = new Vector3(-wallSpeed, 0f, 0f);
 	}
 	
@@ -26,7 +28,7 @@ public class DeathWallsBehaviour : MonoBehaviour {
     {
         if (other.CompareTag("Player"))
         {
-            Destroy(other.gameObject);
+            levelManager.RespawnPlayer();
         }
     }
 

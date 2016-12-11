@@ -5,11 +5,13 @@ using UnityEngine;
 public class FloorTrapBehaviour : MonoBehaviour {
 
     public float floorTrapDelay = 1.0f;
+    public LevelManager levelManager;
 
     private float time;
 
 	// Use this for initialization
 	void Start () {
+        levelManager = FindObjectOfType<LevelManager>();
         time = 0f;
 	}
 	
@@ -26,7 +28,7 @@ public class FloorTrapBehaviour : MonoBehaviour {
             time += Time.deltaTime;
             if(time >= floorTrapDelay)
             {
-                Destroy(coll.gameObject);
+                levelManager.RespawnPlayer();
                 //playSound
                 //VisualFeedback
             }

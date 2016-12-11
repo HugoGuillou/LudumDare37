@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class FloorLavaBehaviour : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
+    public LevelManager levelManager;
+
+    // Use this for initialization
+    void Start () {
+        levelManager = FindObjectOfType<LevelManager>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -18,7 +20,7 @@ public class FloorLavaBehaviour : MonoBehaviour {
     {
         if (coll.gameObject.tag == "Player")
         {
-            Destroy(coll.gameObject);
+            levelManager.RespawnPlayer();
         }
     }
 }
