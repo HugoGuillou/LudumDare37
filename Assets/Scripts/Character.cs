@@ -51,6 +51,8 @@ using UnityEngine;
         const float disable_time = 0.1f;
         private float disable_time_left;
 
+        private bool m_OnPlatform;
+        private Rigidbody2D m_CurrentPlatform;
 
         float lastMove = 0;
 
@@ -76,6 +78,9 @@ using UnityEngine;
         {
             m_Grounded = false;
             m_TouchWall = false;
+
+            m_OnPlatform = false;
+
             // The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
             // This can be done using layers instead but Sample Assets will not overwrite your project settings.
                       
@@ -84,12 +89,23 @@ using UnityEngine;
                 {
                     if (colliders_floor[i].gameObject != gameObject)
                     {
+                        if(colliders_floor[i].gameObject.tag == "MovingPlatorm")
+                        {
+                            m_OnPlatform = true;
+                            m_CurrentPlatform = colliders_floor[i].transform.parent.GetComponent<Rigidbody2D>();
+
+                        }
                         m_Grounded = true;
                         m_CanDoubleJump = true;
 
                         m_CanWallJump = false;
 
                     }
+                }
+
+                if(!m_OnPlatform)
+                {
+                    m_CurrentPlatform = null;
                 }
 
             if(detecting_time)
@@ -222,7 +238,39 @@ using UnityEngine;
                 // The Speed animator parameter is set to the absolute value of the horizontal input.
                 m_Anim.SetFloat("Speed", Mathf.Abs(move));
 
-                    if(((walljumping && move == 0) || (disable_input && !wall_push)) && !m_CanClimbCeil)
+                    if(m_OnPlatform)
+                    {
+                        /*
+                         float addForce = 
+
+                         
+                        if((m_CurrentPlatform.velocity.x < 0 && move > 0) || ( 0 && move < 0))
+                        {
+                            addForce = move * PlayerVelocity + m_CurrentPlatform.velocity.x;
+                        }
+                        else if((m_CurrentPlatform.velocity.x < 0 && move < 0) || (m_CurrentPlatform.velocity.x > 0 && move > 0))
+                        {
+                            addForce = move * PlayerVelocity  - m_CurrentPlatform.velocity.x;
+                        }
+                        */
+
+                        
+                       if(Math.Sign(m_CurrentPlatform.velocity.x) != Math.Sign(m_Rigidbody2D.velocity.x))
+                        {
+                            m_Rigidbody2D.velocity = new Vector2(move * PlayerVelocity, m_Rigidbody2D.velocity.y);
+
+                        }
+                        else if(m_CurrentPlatform.velocity.y != 0)
+                        {
+                            m_Rigidbody2D.velocity = new Vector2(move * PlayerVelocity + m_CurrentPlatform.velocity.x, m_Rigidbody2D.velocity.y);
+                        }
+                        else
+                        {
+                            m_Rigidbody2D.velocity = new Vector2(move * PlayerVelocity + m_CurrentPlatform.velocity.x, m_Rigidbody2D.velocity.y + m_CurrentPlatform.velocity.y);
+                        }
+
+                    }
+                    else if(((walljumping && move == 0) || (disable_input && !wall_push)) && !m_CanClimbCeil)
                     {
                         m_Rigidbody2D.velocity = new Vector2(walljump_coeff, m_Rigidbody2D.velocity.y);
                     }
