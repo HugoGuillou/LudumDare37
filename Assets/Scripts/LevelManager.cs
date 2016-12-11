@@ -46,7 +46,7 @@ public class LevelManager : MonoBehaviour {
         }
         foreach (GameObject platform in platformsMove)
         {
-            platform.GetComponentInChildren<PlatformBrokenBehaviour>().Reset();
+            platform.GetComponentInChildren<PlatformMovingBehaviour>().Reset();
         }
         foreach (GameObject arrow in arrows)
         {
