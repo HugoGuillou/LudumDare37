@@ -36,7 +36,7 @@ public class LevelManager : MonoBehaviour {
         }
         foreach (GameObject platform in platformsBroke)
         {
-            platform.SetActive(false);
+            platform.GetComponent<PlatformBrokenBehaviour>().Reset();
             platform.SetActive(true);
         }
     }

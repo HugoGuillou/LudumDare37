@@ -45,4 +45,9 @@ public class PlatformBrokenBehaviour : MonoBehaviour {
         }
     }
 
+    public void Reset()
+    {
+        time = 0f;
+        isActivated = false;
+    }
 }
