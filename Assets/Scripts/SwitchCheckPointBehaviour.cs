@@ -27,6 +27,7 @@ public class SwitchCheckPointBehaviour : MonoBehaviour {
             if (Input.GetButtonDown("Action"))
             {
                 levelManager.currentCheckpoint = checkpoint;
+                GetComponentInChildren<Animator>().SetBool("isOn", true);
             }
         }
     }

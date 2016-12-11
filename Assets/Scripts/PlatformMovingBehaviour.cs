@@ -114,5 +114,6 @@ public class PlatformMovingBehaviour : MonoBehaviour {
     public void Desactivate()
     {
         stop = true;
+        body.velocity = new Vector2(0f, 0f);
     }
 }
