@@ -43,12 +43,12 @@ public class PlatformBrokenBehaviour : MonoBehaviour {
 
         if (time >= plateformBrokenDuration)
         {
-            gameObject.SetActive(false);
+            AudioSource.PlayClipAtPoint(brokeSound, transform.position);
             time = 0f;
             isActivated = false;
+            gameObject.SetActive(false);
             //Feedback visuel
             //PlaySound Disparition
-            GetComponent<AudioSource>().PlayOneShot(brokeSound);
         }
     }
 
