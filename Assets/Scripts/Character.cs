@@ -190,7 +190,7 @@ using UnityEngine;
                     {
                         Debug.Log("Ceiling");
                         
-                        if(!m_Grounded && colliders_ceil[i].gameObject.tag == "ClimbableCeiling")
+                        if(!m_Grounded && colliders_ceil[i].gameObject.tag == "JumpableWall")
                         {                       
                            m_TouchCeil     = true;
                            m_CanDoubleJump = false;
