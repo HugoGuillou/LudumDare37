@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlatformBrokenBehaviour : MonoBehaviour {
 
     public float plateformBrokenDuration = 1.0f;
+    public AudioClip land;
+    public AudioClip brokeSound;
 
     private float time;
     private bool isActivated;
@@ -27,6 +29,8 @@ public class PlatformBrokenBehaviour : MonoBehaviour {
     {
         if (coll.gameObject.tag == "Player")
         {
+            //PlaySound Land
+            GetComponent<AudioSource>().PlayOneShot(land);
             isActivated = true;
             transform.GetChild(0).gameObject.SetActive(false);
             transform.GetChild(1).gameObject.SetActive(true);
@@ -43,7 +47,8 @@ public class PlatformBrokenBehaviour : MonoBehaviour {
             time = 0f;
             isActivated = false;
             //Feedback visuel
-            //PlaySound
+            //PlaySound Disparition
+            GetComponent<AudioSource>().PlayOneShot(brokeSound);
         }
     }
 
