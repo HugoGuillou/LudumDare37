@@ -9,9 +9,11 @@ public class LevelManager : MonoBehaviour {
     public LavaWallBehaviour[] lavaWalls;
 
     private CharacterController player;
+    private GameObject[] platformsBroke;
 	// Use this for initialization
 	void Start () {
         player = FindObjectOfType<CharacterController>();
+        platformsBroke = GameObject.FindGameObjectsWithTag("PlatformBroken");
 	}
 	
 	// Update is called once per frame
@@ -22,7 +24,7 @@ public class LevelManager : MonoBehaviour {
     public void RespawnPlayer()
     {
         player.transform.position = currentCheckpoint.transform.position;
-        for(int i = 0; i < laserWalls.Length; ++i)
+        for (int i = 0; i < laserWalls.Length; ++i)
         {
             laserWalls[i].Desactivate();
             laserWalls[i].SetPositionInitial();
@@ -31,6 +33,10 @@ public class LevelManager : MonoBehaviour {
         {
             lavaWalls[j].Desactivate();
             lavaWalls[j].SetPositionInitial();
+        }
+        foreach (GameObject platform in platformsBroke)
+        {
+            platform.SetActive(true);
         }
     }
 }
