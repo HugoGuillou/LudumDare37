@@ -9,10 +9,13 @@ public class SwitchCheckPointBehaviour : MonoBehaviour {
     public AudioClip switchSound;
 
     private bool sawOnce;
+    private bool wasUsed;
 
     // Use this for initialization
     void Start () {
         levelManager = FindObjectOfType<LevelManager>();
+        sawOnce = false;
+        wasUsed = false;
     }
 	
 	// Update is called once per frame
@@ -29,7 +32,11 @@ public class SwitchCheckPointBehaviour : MonoBehaviour {
             {
                 levelManager.currentCheckpoint = checkpoint;
                 GetComponentInChildren<Animator>().SetBool("isOn", true);
-                GetComponent<AudioSource>().PlayOneShot(switchSound);
+                if(!wasUsed)
+                {
+                    GetComponent<AudioSource>().PlayOneShot(switchSound);
+                    wasUsed = true;
+                }             
             }
         }
     }
