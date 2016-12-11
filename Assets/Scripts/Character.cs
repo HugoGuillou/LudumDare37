@@ -16,6 +16,7 @@ using UnityEngine;
         private bool m_Grounded; 
         private bool m_CanJump;         // Whether or not the player is grounded.          
         private bool m_CanDoubleJump;         // Whether or not the player is grounded.
+        private bool m_CanWallJump;         // Whether or not the player is grounded.
 
         private Transform m_CeilingCheck;   // A position marking where to check for ceilings
         const float k_CeilingRadius = .01f; // Radius of the overlap circle to determine if the player can stand up
@@ -29,6 +30,22 @@ using UnityEngine;
 
         private bool m_TouchWall = false;
 
+        private bool walljumping = false;
+        public float wallJumpForce = 5;
+        private float walljump_coeff = 0;
+        private bool wall_push;
+
+        private bool detecting_time = false;
+        const float detect_time = 0.2f;
+        private float detect_time_left;
+
+        private bool disable_input = false;
+        const float disable_time = 0.1f;
+        private float disable_time_left;
+
+
+        float lastMove = 0;
+
         private void Awake()
         {
             // Setting up references.
@@ -38,6 +55,9 @@ using UnityEngine;
 
             m_Anim = GetComponent<Animator>();
             m_Rigidbody2D = GetComponent<Rigidbody2D>();
+
+            detect_time_left = detect_time;
+            disable_time_left = disable_time;
         }
 
 
@@ -45,30 +65,65 @@ using UnityEngine;
         {
             m_Grounded = false;
             m_TouchWall = false;
-            Debug.Log(m_GroundCheck.localScale.x * transform.localScale.x);
             // The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
             // This can be done using layers instead but Sample Assets will not overwrite your project settings.
-            Collider2D[] colliders_floor = Physics2D.OverlapCircleAll(m_GroundCheck.position, Mathf.Abs(m_GroundCheck.localScale.x * transform.localScale.x), m_WhatIsGround);
-            for (int i = 0; i < colliders_floor.Length; i++)
-            {
-                if (colliders_floor[i].gameObject != gameObject)
+
+           
+
+           
+                Collider2D[] colliders_floor = Physics2D.OverlapCircleAll(m_GroundCheck.position, Mathf.Abs(m_GroundCheck.localScale.x * transform.localScale.x), m_WhatIsGround);
+                for (int i = 0; i < colliders_floor.Length; i++)
                 {
-                   
-                    m_Grounded = true;
-                    m_CanDoubleJump = true;
+                    if (colliders_floor[i].gameObject != gameObject)
+                    {
+                        m_Grounded = true;
+                        m_CanDoubleJump = true;
+
+                        m_CanWallJump = false;
+
+                    }
+                }
+
+            if(detecting_time)
+            {
+                detect_time_left -= Time.deltaTime;
+                m_TouchWall = false;
+               
+                if(detect_time_left < 0)
+                {
+                    m_CanWallJump = false;
+                    detecting_time = false;
                 }
             }
 
-            Collider2D[] colliders_wall  = Physics2D.OverlapBoxAll(m_WallCheck.position, Vector3.Scale(m_WallCheck.localScale, transform.localScale), m_WhatIsGround);
-            for (int i = 0; i < colliders_wall.Length; i++)
+            if(!detecting_time || detect_time_left < 0)
             {
-                if(colliders_wall[i].gameObject != gameObject && !Input.GetKeyDown(KeyCode.LeftArrow) && !Input.GetKeyDown(KeyCode.RightArrow))
+               Vector3 abs_scale_tr = new Vector3(Math.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+               Vector3 abs_scale_wallcheck = new Vector3(Math.Abs(m_WallCheck.localScale.x), m_WallCheck.localScale.y, m_WallCheck.localScale.z);
+
+               Collider2D[] colliders_wall  = Physics2D.OverlapBoxAll(m_WallCheck.position, Vector3.Scale(abs_scale_tr, abs_scale_wallcheck), m_WhatIsGround);
+               for (int i = 0; i < colliders_wall.Length; i++)
                 {
-                    m_TouchWall = true;
-                    m_CanDoubleJump = false;
+                   if(colliders_wall[i].gameObject != gameObject && !Input.GetKeyDown(KeyCode.LeftArrow) && !Input.GetKeyDown(KeyCode.RightArrow))
+                    {
+                            
+                        print(colliders_wall[i].gameObject.tag );
+                        if(!m_Grounded && colliders_wall[i].gameObject.tag == "ClimbableWall")
+                        {
+                            m_TouchWall = true;
+                            m_CanDoubleJump = false;
+                            m_CanWallJump = true;
+                        }
+                    }
                 }
+                m_Anim.SetBool("Ground", m_Grounded);
+                detect_time_left = detect_time;
+                //detecting_time = false;
             }
-            m_Anim.SetBool("Ground", m_Grounded);
+            else
+            {
+                m_CanDoubleJump = true;
+            }
 
             // Set the vertical animation
             m_Anim.SetFloat("vSpeed", m_Rigidbody2D.velocity.y);
@@ -77,6 +132,8 @@ using UnityEngine;
 
         public void Move(float move, bool crouch, bool jump)
         {
+
+
             // If crouching, check to see if the character can stand up
             if (!crouch && m_Anim.GetBool("Crouch"))
             {
@@ -86,16 +143,13 @@ using UnityEngine;
                     crouch = true;
                 }
             }
-
-
-            
    
 
             // Set whether or not the character is crouching in the animator
             m_Anim.SetBool("Crouch", crouch);
 
             //only control the player if grounded or airControl is turned on
-            if (m_Grounded || m_AirControl)
+            if ((m_Grounded || m_AirControl))
             {
                 // Reduce the speed if crouching by the crouchSpeed multiplier
                 move = (crouch ? move*m_CrouchSpeed : move);
@@ -103,43 +157,98 @@ using UnityEngine;
                 // The Speed animator parameter is set to the absolute value of the horizontal input.
                 m_Anim.SetFloat("Speed", Mathf.Abs(move));
 
+                    if((walljumping && move == 0) || (disable_input && !wall_push))
+                    {
+                        m_Rigidbody2D.velocity = new Vector2(walljump_coeff, m_Rigidbody2D.velocity.y);
+                    }
+                    else
+                    {
+                        m_Rigidbody2D.velocity = new Vector2(move * PlayerVelocity, m_Rigidbody2D.velocity.y);
+                        walljumping = false;
+                    }
 
-                // Move the character
-                m_Rigidbody2D.velocity = new Vector2(move*PlayerVelocity, m_Rigidbody2D.velocity.y);
+                //m_Rigidbody2D.AddForce(new Vector2(Math.Sign(move) * 800, 0));
 
                 // If the input is moving the player right and the player is facing left...
-                if (move > 0 && !m_FacingRight)
+                if(!m_CanWallJump)
                 {
-                    // ... flip the player.
-                    Flip();
+                    if (move > 0 && !m_FacingRight)
+                    {
+                        // ... flip the player.
+                        Flip();
+                    }
+                        // Otherwise if the input is moving the player left and the player is facing right...
+                    else if (move < 0 && m_FacingRight)
+                    {
+                        // ... flip the player.
+                        Flip();
+                    }
                 }
-                    // Otherwise if the input is moving the player left and the player is facing right...
-                else if (move < 0 && m_FacingRight)
-                {
-                    // ... flip the player.
-                    Flip();
-                }
-            }
-            // If the player should jump...
-            if ((m_Grounded || m_TouchWall) && jump )
-            {
-                // Add a vertical force to the player.
-                Debug.Log("Jump");
-                m_Grounded = false;
-                m_Anim.SetBool("Ground", false);
-                m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
             }
 
+            if((m_TouchWall && !disable_input) || m_Grounded)
+            {   
+                walljumping = false;
+            }
+            
             // Wall Grab
-            else if(!m_Grounded && m_TouchWall)
-            {
-                m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, 0);
-                Debug.Log("Grab");
+           if(!m_Grounded && m_TouchWall)
+            {   
 
+                m_Rigidbody2D.velocity = new Vector2(0, 0);
+
+            }
+
+            wall_push = false;
+
+            //Wall Jump
+            if(!m_Grounded && m_CanWallJump)
+            {
                 if(jump)
                 {
-                    Debug.Log("WallJump");
-                    m_Rigidbody2D.AddForce(new Vector2(m_JumpForce, m_JumpForce));
+                    //Debug.Log("WallJump");
+                    Vector2 force = new Vector2(0,  0);
+                    walljumping = true;
+
+                    m_Rigidbody2D.AddForce(new Vector2(0,800));  
+                    
+                    m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, 0);
+                    detecting_time = true;
+                    m_CanDoubleJump = true;
+                    disable_input = true;
+                }
+
+                if(m_FacingRight)
+                {
+                    walljump_coeff = - wallJumpForce;
+                    if(Input.GetKeyDown(KeyCode.LeftArrow))
+                    {
+                        wall_push = true;
+                    }
+                }
+                else
+                {
+                    walljump_coeff = wallJumpForce;
+                    if(Input.GetKeyDown(KeyCode.RightArrow))
+                    {
+
+                        wall_push = true;
+                    }
+                }
+
+            }
+
+            // If the player should jump...
+            else if ((m_Grounded || m_TouchWall))
+            {
+                if(jump)
+                {
+
+                    // Add a vertical force to the player.
+                    m_Grounded = false;
+                    m_Anim.SetBool("Ground", false);
+                    m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
+                    //Debug.Log("Jump");  
                 }
             }
 
@@ -150,12 +259,17 @@ using UnityEngine;
                 Vector3 new_vel = new Vector3(m_Rigidbody2D.velocity.x, 0);
                 m_Rigidbody2D.velocity = new_vel;
                 m_CanDoubleJump = false;
-                Debug.Log("double jump");
             }
 
-            Debug.Log("Ground " + m_Grounded);
-
-
+            if(disable_input)
+            {
+                disable_time_left -= Time.deltaTime;
+                if(disable_time_left < 0)
+                {
+                    disable_input = false;
+                    disable_time_left = disable_time;
+                }
+            }
 
         }
 
@@ -170,9 +284,7 @@ using UnityEngine;
 
             Vector3 wall_check_pos = transform.Find("WallCheck").position;
             Vector3 wall_check_scale = Vector3.Scale(transform.Find("WallCheck").localScale,transform.localScale);
-            Gizmos.DrawWireCube(wall_check_pos, wall_check_scale);
-            print(transform.Find("GroundCheck").localScale.x * transform.localScale.x);
-            
+            Gizmos.DrawWireCube(wall_check_pos, wall_check_scale);          
 
 
         }

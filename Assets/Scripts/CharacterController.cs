@@ -30,7 +30,7 @@ using UnityStandardAssets.CrossPlatformInput;
         {
             // Read the inputs.
             bool crouch = Input.GetKey(KeyCode.LeftControl);
-
+            
             int h = 0;
 
             if(Input.GetKey(KeyCode.LeftArrow))
@@ -38,8 +38,9 @@ using UnityStandardAssets.CrossPlatformInput;
 
             else if(Input.GetKey(KeyCode.RightArrow))
                 h = 1;
-
             
+
+           
             // Pass all parameters to the character control script.
             m_Character.Move(h, crouch, m_Jump);
             
