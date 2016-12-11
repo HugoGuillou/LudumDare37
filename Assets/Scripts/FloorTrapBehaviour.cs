@@ -5,42 +5,83 @@ using UnityEngine;
 public class FloorTrapBehaviour : MonoBehaviour {
 
     public float floorTrapDelay = 1.0f;
-    public LevelManager levelManager;
+    public float spikeDelay = 1.0f;
 
     private float time;
+    private bool isOn;
+    private bool touched;
+    private bool isOut;
 
 	// Use this for initialization
 	void Start () {
-        levelManager = FindObjectOfType<LevelManager>();
         time = 0f;
+        isOn = false;
+        isOut = false;
+        touched = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+        Activate();
+
 	}
 
-    void OnCollisionStay2D(Collision2D coll)
+    void OnCollisionEnter2D(Collision2D coll)
     {
-        Debug.Log("B" + time);
         if (coll.gameObject.tag == "Player")
         {
-            time += Time.deltaTime;
-            if(time >= floorTrapDelay)
-            {
-                levelManager.RespawnPlayer();
-                //playSound
-                //VisualFeedback
-            }
+            isOn = true;
+            touched = true;
         }
     }
 
     void OnCollisionExit2D(Collision2D info)
     {
-        Debug.Log("A" + time);
         if(info.transform.CompareTag("Player"))
         {
-            time = 0f;
+            isOn = false;
+        }
+    }
+
+    void Activate()
+    {
+        if(isOn)
+        {
+            time += Time.deltaTime;
+            if (time >= floorTrapDelay)
+            {
+                transform.GetChild(0).gameObject.SetActive(true);
+                isOut = true;
+                time = 0f;
+                //playSound Sortie piques
+            }
+        }
+        else
+        {
+            if(!isOut && touched)
+            {
+                time += Time.deltaTime;
+                if (time >= floorTrapDelay)
+                {
+                    transform.GetChild(0).gameObject.SetActive(true);
+                    isOut = true;
+                    touched = false;
+                    time = 0f;
+                    //playSound Sortie piques
+                }
+            }
+            if(isOut)
+            {
+                time += Time.deltaTime;
+                if (time >= spikeDelay)
+                {
+                    transform.GetChild(0).gameObject.SetActive(false);
+                    isOut = false;
+                    touched = false;
+                    time = 0f;
+                    //playSound rentrée piques
+                }
+            }
         }
     }
 }
