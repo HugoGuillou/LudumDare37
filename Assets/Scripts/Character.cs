@@ -133,7 +133,7 @@ using UnityEngine;
                Collider2D[] colliders_wall  = Physics2D.OverlapBoxAll(m_WallCheck.position, Vector3.Scale(abs_scale_tr, abs_scale_wallcheck), m_WhatIsGround);
                for (int i = 0; i < colliders_wall.Length; i++)
                 {
-                   if(colliders_wall[i].gameObject != gameObject && !Input.GetKeyDown(KeyCode.LeftArrow) && !Input.GetKeyDown(KeyCode.RightArrow))
+                   if(colliders_wall[i].gameObject != gameObject && !Input.GetButtonDown("Horizontal"))
                     {   
 
                         if(!m_Grounded )
@@ -190,7 +190,7 @@ using UnityEngine;
                     {
                         Debug.Log("Ceiling");
                         
-                        if(!m_Grounded && colliders_ceil[i].gameObject.tag == "JumpableWall")
+                        if(!m_Grounded && (colliders_ceil[i].gameObject.tag == "JumpableWall" || colliders_ceil[i].gameObject.tag == "ClimbableCeiling"))
                         {                       
                            m_TouchCeil     = true;
                            m_CanDoubleJump = false;
@@ -223,8 +223,6 @@ using UnityEngine;
             }
 
         }
-
-        
 
 
         public void Move(float move, bool crouch, bool jump)
@@ -349,7 +347,7 @@ using UnityEngine;
                 if(m_FacingRight)
                 {
                     walljump_coeff = - wallJumpForce;
-                    if(Input.GetKeyDown(KeyCode.LeftArrow))
+                    if(move < 0)
                     {
                         wall_push = true;
                     }
@@ -389,6 +387,7 @@ using UnityEngine;
                 m_Rigidbody2D.velocity = new_vel;
                 m_CanDoubleJump = false;
             }
+            //Ceiling Climb
             else if(m_CanClimbCeil)
             {
                 Debug.Log("AAAAAAAAAAAAAAAa");
