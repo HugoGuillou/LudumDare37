@@ -28,6 +28,8 @@ public class PlatformBrokenBehaviour : MonoBehaviour {
         if (coll.gameObject.tag == "Player")
         {
             isActivated = true;
+            transform.GetChild(0).gameObject.SetActive(false);
+            transform.GetChild(1).gameObject.SetActive(true);
         }
     }
 
@@ -49,5 +51,7 @@ public class PlatformBrokenBehaviour : MonoBehaviour {
     {
         time = 0f;
         isActivated = false;
+        transform.GetChild(0).gameObject.SetActive(true);
+        transform.GetChild(1).gameObject.SetActive(false);
     }
 }
