@@ -37,10 +37,12 @@ public class SwitchArrowBehaviour : MonoBehaviour {
                     if (movingPlatform.GetComponentInChildren<PlatformMovingBehaviour>().stop == true)
                     {
                         movingPlatform.GetComponentInChildren<PlatformMovingBehaviour>().Activate();
+                        GetComponentInChildren<Animator>().SetBool("isOn", true);
                     }
                     else
                     {
                         movingPlatform.GetComponentInChildren<PlatformMovingBehaviour>().Desactivate();
+                        GetComponentInChildren<Animator>().SetBool("isOn", false);
                     }
                     sawOnce = true;
                 }
