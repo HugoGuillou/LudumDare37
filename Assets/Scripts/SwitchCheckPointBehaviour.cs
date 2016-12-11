@@ -6,6 +6,7 @@ public class SwitchCheckPointBehaviour : MonoBehaviour {
 
     public GameObject checkpoint;
     public LevelManager levelManager;
+    public AudioClip switchSound;
 
     private bool sawOnce;
 
@@ -28,6 +29,7 @@ public class SwitchCheckPointBehaviour : MonoBehaviour {
             {
                 levelManager.currentCheckpoint = checkpoint;
                 GetComponentInChildren<Animator>().SetBool("isOn", true);
+                GetComponent<AudioSource>().PlayOneShot(switchSound);
             }
         }
     }
