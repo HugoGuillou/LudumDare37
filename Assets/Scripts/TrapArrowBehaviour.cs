@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TrapArrowBehaviour : MonoBehaviour {
+    public AudioClip trapFloorSound;
 
     private Transform arrows;
 	// Use this for initialization
@@ -21,6 +22,7 @@ public class TrapArrowBehaviour : MonoBehaviour {
         {
             GetComponentInChildren<Animator>().SetBool("isOn", true);
             arrows.GetComponent<ArrowBehaviour>().Activate();
+            GetComponent<AudioSource>().PlayOneShot(trapFloorSound);
         }
     }
 
