@@ -2,25 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FloorLavaBehaviour : MonoBehaviour {
+public class CheckPointBehaviour : MonoBehaviour {
 
     public LevelManager levelManager;
 
-    // Use this for initialization
-    void Start () {
+	// Use this for initialization
+	void Start () {
         levelManager = FindObjectOfType<LevelManager>();
-    }
+	}
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
 
-    void OnCollisionEnter2D(Collision2D coll)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        if (coll.gameObject.tag == "Player")
+        if (other.gameObject.CompareTag("Player"))
         {
-            levelManager.RespawnPlayer();
+            levelManager.currentCheckpoint = gameObject;
         }
     }
 }
