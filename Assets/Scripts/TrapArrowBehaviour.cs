@@ -19,7 +19,13 @@ public class TrapArrowBehaviour : MonoBehaviour {
     {
         if (coll.gameObject.tag == "Player")
         {
+            GetComponentInChildren<Animator>().SetBool("isOn", true);
             arrows.GetComponent<ArrowBehaviour>().Activate();
         }
+    }
+
+    void OnCollisionExit2D(Collision2D coll)
+    {
+        GetComponentInChildren<Animator>().SetBool("isOn", false);
     }
 }
