@@ -11,10 +11,13 @@ public class LevelManager : MonoBehaviour {
     private CharacterController player;
     private GameObject[] platformsBroke;
     private GameObject[] arrows;
+    private GameObject[] platformsMove;
+
     // Use this for initialization
     void Start () {
         player = FindObjectOfType<CharacterController>();
         platformsBroke = GameObject.FindGameObjectsWithTag("PlatformBroken");
+        platformsMove = GameObject.FindGameObjectsWithTag("MovingPlatorm");
         arrows = GameObject.FindGameObjectsWithTag("Arrow");
     }
 	
@@ -40,6 +43,10 @@ public class LevelManager : MonoBehaviour {
         {
             platform.GetComponent<PlatformBrokenBehaviour>().Reset();
             platform.SetActive(true);
+        }
+        foreach (GameObject platform in platformsMove)
+        {
+            platform.GetComponentInChildren<PlatformBrokenBehaviour>().Reset();
         }
         foreach (GameObject arrow in arrows)
         {
