@@ -27,10 +27,10 @@ public class LevelManager : MonoBehaviour {
             laserWalls[i].Desactivate();
             laserWalls[i].SetPositionInitial();
         }
-        for (int i = 0; i <= lavaWalls.Length; ++i)
+        for (int j = 0; j <= lavaWalls.Length; ++j)
         {
-            lavaWalls[i].Desactivate();
-            lavaWalls[i].SetPositionInitial();
+            lavaWalls[j].Desactivate();
+            lavaWalls[j].SetPositionInitial();
         }
     }
 }
