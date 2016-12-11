@@ -7,6 +7,7 @@ public class SwitchArrowBehaviour : MonoBehaviour {
     public GameObject movingPlatform;
     public GameObject arrowSpawner;
     public bool spawnArrow = true;
+    public AudioClip buttonSound;
 
 
     private bool sawOnce;
@@ -38,11 +39,15 @@ public class SwitchArrowBehaviour : MonoBehaviour {
                     {
                         movingPlatform.GetComponentInChildren<PlatformMovingBehaviour>().Activate();
                         GetComponentInChildren<Animator>().SetBool("isOn", true);
+                        GetComponent<AudioSource>().PlayOneShot(buttonSound);
+                        //sound
                     }
                     else
                     {
                         movingPlatform.GetComponentInChildren<PlatformMovingBehaviour>().Desactivate();
                         GetComponentInChildren<Animator>().SetBool("isOn", false);
+                        GetComponent<AudioSource>().PlayOneShot(buttonSound);
+                        //sound
                     }
                     sawOnce = true;
                 }
