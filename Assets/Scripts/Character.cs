@@ -19,6 +19,7 @@ using UnityEngine;
         private bool m_CanWallJump;         // Whether or not the player is grounded.
         private bool m_CanClimbCeil;         // Whether or not the player is grounded.
 
+        private bool m_HasTouchedWall;
         private bool m_HasTouchedCeiling;
 
         private Transform m_CeilingCheck;   // A position marking where to check for ceilings
@@ -32,6 +33,7 @@ using UnityEngine;
         private bool m_FacingRight = true;  // For determining which way the player is currently facing.
 
         private bool m_TouchWall = false;
+        private bool m_TouchJumpWall = false;
         private bool m_TouchCeil = false;
 
         private bool walljumping = false;
@@ -78,6 +80,7 @@ using UnityEngine;
         {
             m_Grounded = false;
             m_TouchWall = false;
+            m_TouchJumpWall = false;
 
             m_OnPlatform = false;
 
@@ -89,6 +92,7 @@ using UnityEngine;
                 {
                     if (colliders_floor[i].gameObject != gameObject)
                     {
+                        Debug.Log("Ground");
                         if(colliders_floor[i].gameObject.tag == "MovingPlatorm")
                         {
                             m_OnPlatform = true;
@@ -111,7 +115,7 @@ using UnityEngine;
             if(detecting_time)
             {
                 detect_time_left -= Time.deltaTime;
-                m_TouchWall = false;
+                m_TouchJumpWall = false;
                
                 if(detect_time_left < 0)
                 {
@@ -130,18 +134,30 @@ using UnityEngine;
                for (int i = 0; i < colliders_wall.Length; i++)
                 {
                    if(colliders_wall[i].gameObject != gameObject && !Input.GetKeyDown(KeyCode.LeftArrow) && !Input.GetKeyDown(KeyCode.RightArrow))
-                    {
-                        if(!m_Grounded && colliders_wall[i].gameObject.tag == "JumpableWall")
+                    {   
+
+                        if(!m_Grounded )
                         {
-                            m_TouchWall = true;
-                            m_CanDoubleJump = false;
-                            m_CanWallJump = true;
+                            if (colliders_wall[i].gameObject.tag == "JumpableWall")
+                            {
+                                m_TouchJumpWall = true;
+                                m_CanDoubleJump = false;
+                                m_CanWallJump = true;
+                            }
+                             else
+                             {
+
+                                m_TouchWall = true;
+                                m_TouchJumpWall = false;
+                                m_CanWallJump = false;
+                             }
                         }
+                       
                     }
                 }
                 m_Anim.SetBool("Ground", m_Grounded);
                 detect_time_left = detect_time;
-                //detecting_time = false;
+                detecting_time = false;
             }
             else
             {
@@ -149,10 +165,12 @@ using UnityEngine;
             }
 
 
+            //Debug.Log(m_);
+
             if(detecting_ceil_time)
             {
                 detect_ceil_time_left -= Time.deltaTime;
-                m_TouchWall = false;
+                m_TouchJumpWall = false;
                
                 if(detect_ceil_time_left < 0)
                 {
@@ -164,14 +182,14 @@ using UnityEngine;
            m_TouchCeil = false;
            if(!detecting_ceil_time || detect_ceil_time_left < 0)
            {
-                print("DETECT");
                Vector3 abs_scale_ceilcheck = new Vector3(Math.Abs(m_CeilingCheck.localScale.x), m_CeilingCheck.localScale.y, m_CeilingCheck.localScale.z);
                Collider2D[] colliders_ceil  = Physics2D.OverlapBoxAll(m_CeilingCheck.position, Vector3.Scale(abs_scale_tr, abs_scale_ceilcheck), m_WhatIsGround);
                for (int i = 0; i < colliders_ceil.Length; i++)
                 {
                    if(colliders_ceil[i].gameObject != gameObject)
                     {
-                            
+                        Debug.Log("Ceiling");
+                        
                         if(!m_Grounded && colliders_ceil[i].gameObject.tag == "ClimbableCeiling")
                         {                       
                            m_TouchCeil     = true;
@@ -203,10 +221,7 @@ using UnityEngine;
                 m_Rigidbody2D.gravityScale = 5;
                 m_CanClimbCeil = false;
             }
-            
 
-
-            
         }
 
         
@@ -299,13 +314,13 @@ using UnityEngine;
                 }
             }
 
-            if((m_TouchWall && !disable_input) || m_Grounded)
+            if((m_TouchJumpWall && !disable_input) || m_Grounded)
             {   
                 walljumping = false;
             }
             
             // Wall Grab
-           if(!m_Grounded && m_TouchWall)
+           if(!m_Grounded && m_TouchJumpWall)
             {   
 
                 m_Rigidbody2D.velocity = new Vector2(0, 0);
@@ -322,7 +337,7 @@ using UnityEngine;
                     //Debug.Log("WallJump");
                     Vector2 force = new Vector2(0,  0);
                     walljumping = true;
-
+                    Debug.Log("WallJump");
                     m_Rigidbody2D.AddForce(new Vector2(0,800));  
                     
                     m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, 0);
@@ -352,7 +367,7 @@ using UnityEngine;
             }
 
             // If the player should jump...
-            else if ((m_Grounded || m_TouchWall))
+            else if ((m_Grounded || m_TouchJumpWall))
             {
                 if(jump)
                 {
@@ -367,7 +382,7 @@ using UnityEngine;
             }
 
             //Double Jump
-            else if(!m_Grounded && !m_TouchWall && jump && m_CanDoubleJump)
+            else if(!m_Grounded && !m_TouchJumpWall && jump && m_CanDoubleJump)
             {
                 m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
                 Vector3 new_vel = new Vector3(m_Rigidbody2D.velocity.x, 0);
