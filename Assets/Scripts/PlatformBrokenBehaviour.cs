@@ -34,14 +34,15 @@ public class PlatformBrokenBehaviour : MonoBehaviour {
     void Disapear()
     {
         time += Time.deltaTime;
-        //Feedback visuel
-        //PlaySound
+
         if (time >= plateformBrokenDuration)
         {
             gameObject.SetActive(false);
             time = 0f;
             isActivated = false;
-        }  
+            //Feedback visuel
+            //PlaySound
+        }
     }
 
 }

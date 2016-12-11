@@ -36,6 +36,7 @@ public class LevelManager : MonoBehaviour {
         }
         foreach (GameObject platform in platformsBroke)
         {
+            platform.SetActive(false);
             platform.SetActive(true);
         }
     }
