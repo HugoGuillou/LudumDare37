@@ -73,7 +73,7 @@ public class PlatformMovingBehaviour : MonoBehaviour {
             }
             else
             {
-                if (transform.position.x >= centre.position.y+distance)
+                if (transform.position.x >= centre.position.x+distance)
                 {
                     platformMove = new Vector3(-movingSpeed, 0f, 0f);
                 }
