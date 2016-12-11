@@ -9,12 +9,14 @@ public class DeathWallsBehaviour : MonoBehaviour {
     public LevelManager levelManager;
 
     private Vector3 wallMove;
+    private Vector3 initialPos;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         levelManager = FindObjectOfType<LevelManager>();
         wallMove = new Vector3(-wallSpeed, 0f, 0f);
-	}
+        initialPos = transform.position;
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -45,5 +47,10 @@ public class DeathWallsBehaviour : MonoBehaviour {
     public void Desactivate()
     {
         stop = true;
+    }
+
+    public void SetPositionInitial()
+    {
+        transform.position = initialPos;
     }
 }

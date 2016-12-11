@@ -5,6 +5,8 @@ using UnityEngine;
 public class LevelManager : MonoBehaviour {
 
     public GameObject currentCheckpoint;
+    public DeathWallsBehaviour[] laserWalls;
+    public LavaWallBehaviour[] lavaWalls;
 
     private CharacterController player;
 	// Use this for initialization
@@ -20,5 +22,15 @@ public class LevelManager : MonoBehaviour {
     public void RespawnPlayer()
     {
         player.transform.position = currentCheckpoint.transform.position;
+        for(int i = 0; i <= laserWalls.Length; ++i)
+        {
+            laserWalls[i].Desactivate();
+            laserWalls[i].SetPositionInitial();
+        }
+        for (int i = 0; i <= lavaWalls.Length; ++i)
+        {
+            lavaWalls[i].Desactivate();
+            lavaWalls[i].SetPositionInitial();
+        }
     }
 }

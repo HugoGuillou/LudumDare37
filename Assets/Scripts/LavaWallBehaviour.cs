@@ -9,12 +9,14 @@ public class LavaWallBehaviour : MonoBehaviour {
     public LevelManager levelManager;
 
     private Vector3 wallMove;
+    private Vector3 initialPos;
 
     // Use this for initialization
     void Start()
     {
         levelManager = FindObjectOfType<LevelManager>();
         wallMove = new Vector3(0f, wallSpeed, 0f);
+        initialPos = transform.position;
     }
 
     // Update is called once per frame
@@ -47,5 +49,10 @@ public class LavaWallBehaviour : MonoBehaviour {
     public void Desactivate()
     {
         stop = true;
+    }
+
+    public void SetPositionInitial()
+    {
+        transform.position = initialPos;
     }
 }
