@@ -11,6 +11,7 @@ public class PlatformMovingBehaviour : MonoBehaviour {
     public bool invert = false;
 
     private Vector3 platformMove;
+    private Vector3 initialPos;
     private Vector2 platformSpeed;
     private Transform centre;
 
@@ -20,6 +21,7 @@ public class PlatformMovingBehaviour : MonoBehaviour {
     void Start () {
 
         body = GetComponent<Rigidbody2D>();
+        initialPos = transform.position;
 
         if (invert)
         {
@@ -114,5 +116,13 @@ public class PlatformMovingBehaviour : MonoBehaviour {
     public void Desactivate()
     {
         stop = true;
+        body.velocity = new Vector2(0f, 0f);
+    }
+
+    public void Reset()
+    {
+        stop = true;
+        body.velocity = new Vector2(0f, 0f);
+        transform.position = initialPos;
     }
 }

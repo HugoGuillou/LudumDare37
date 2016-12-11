@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ArrowBehaviour : MonoBehaviour {
+    public AudioClip spawnArrow;
 
     public bool vertical = false;
     public bool negative = false;
@@ -39,6 +40,7 @@ public class ArrowBehaviour : MonoBehaviour {
                 {
                     Instantiate(arrowsDown, transform.position, rotation);
                     //playSound
+                    GetComponent<AudioSource>().PlayOneShot(spawnArrow);
                     //yield return new WaitForSeconds(arrowDelay);
                 }         
             }
@@ -49,6 +51,7 @@ public class ArrowBehaviour : MonoBehaviour {
                 {
                     Instantiate(arrowsUp, transform.position, rotation);
                     //playSound
+                    GetComponent<AudioSource>().PlayOneShot(spawnArrow);
                     //yield return new WaitForSeconds(arrowDelay);
                 }
             }
@@ -61,6 +64,7 @@ public class ArrowBehaviour : MonoBehaviour {
                 for (int i = 0; i < numberOfArrows; ++i)
                 {
                     Instantiate(arrowsLeft, transform.position, rotation);
+                    GetComponent<AudioSource>().PlayOneShot(spawnArrow);
                     //playSound
                     //yield return new WaitForSeconds(arrowDelay);
                 }
@@ -71,6 +75,7 @@ public class ArrowBehaviour : MonoBehaviour {
                 for (int i = 0; i < numberOfArrows; ++i)
                 {
                     Instantiate(arrowsRight, transform.position, rotation);
+                    GetComponent<AudioSource>().PlayOneShot(spawnArrow);
                     //playSound
                     //yield return new WaitForSeconds(arrowDelay);
                 }
