@@ -17,6 +17,9 @@ using UnityEngine;
         private bool m_CanJump;         // Whether or not the player is grounded.          
         private bool m_CanDoubleJump;         // Whether or not the player is grounded.
         private bool m_CanWallJump;         // Whether or not the player is grounded.
+        private bool m_CanClimbCeil;         // Whether or not the player is grounded.
+
+        private bool m_HasTouchedCeiling;
 
         private Transform m_CeilingCheck;   // A position marking where to check for ceilings
         const float k_CeilingRadius = .01f; // Radius of the overlap circle to determine if the player can stand up
@@ -29,6 +32,7 @@ using UnityEngine;
         private bool m_FacingRight = true;  // For determining which way the player is currently facing.
 
         private bool m_TouchWall = false;
+        private bool m_TouchCeil = false;
 
         private bool walljumping = false;
         public float wallJumpForce = 5;
@@ -39,6 +43,10 @@ using UnityEngine;
         const float detect_time = 0.2f;
         private float detect_time_left;
 
+        private bool detecting_ceil_time = false;
+        const float detect_ceil_time = 0.3f;
+        private float detect_ceil_time_left;
+
         private bool disable_input = false;
         const float disable_time = 0.1f;
         private float disable_time_left;
@@ -46,13 +54,16 @@ using UnityEngine;
 
         float lastMove = 0;
 
-        private void Awake()
+        private void Start()
         {
-            // Setting up references.
             m_GroundCheck = transform.Find("GroundCheck");
             m_CeilingCheck = transform.Find("CeilingCheck");
             m_WallCheck = transform.Find("WallCheck");
+        }
 
+        private void Awake()
+        {
+            // Setting up references.
             m_Anim = GetComponent<Animator>();
             m_Rigidbody2D = GetComponent<Rigidbody2D>();
 
@@ -67,10 +78,7 @@ using UnityEngine;
             m_TouchWall = false;
             // The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
             // This can be done using layers instead but Sample Assets will not overwrite your project settings.
-
-           
-
-           
+                      
                 Collider2D[] colliders_floor = Physics2D.OverlapCircleAll(m_GroundCheck.position, Mathf.Abs(m_GroundCheck.localScale.x * transform.localScale.x), m_WhatIsGround);
                 for (int i = 0; i < colliders_floor.Length; i++)
                 {
@@ -96,9 +104,10 @@ using UnityEngine;
                 }
             }
 
+            Vector3 abs_scale_tr = new Vector3(Math.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+
             if(!detecting_time || detect_time_left < 0)
             {
-               Vector3 abs_scale_tr = new Vector3(Math.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
                Vector3 abs_scale_wallcheck = new Vector3(Math.Abs(m_WallCheck.localScale.x), m_WallCheck.localScale.y, m_WallCheck.localScale.z);
 
                Collider2D[] colliders_wall  = Physics2D.OverlapBoxAll(m_WallCheck.position, Vector3.Scale(abs_scale_tr, abs_scale_wallcheck), m_WhatIsGround);
@@ -106,9 +115,7 @@ using UnityEngine;
                 {
                    if(colliders_wall[i].gameObject != gameObject && !Input.GetKeyDown(KeyCode.LeftArrow) && !Input.GetKeyDown(KeyCode.RightArrow))
                     {
-                            
-                        print(colliders_wall[i].gameObject.tag );
-                        if(!m_Grounded && colliders_wall[i].gameObject.tag == "ClimbableWall")
+                        if(!m_Grounded && colliders_wall[i].gameObject.tag == "JumpableWall")
                         {
                             m_TouchWall = true;
                             m_CanDoubleJump = false;
@@ -125,14 +132,72 @@ using UnityEngine;
                 m_CanDoubleJump = true;
             }
 
-            // Set the vertical animation
-            m_Anim.SetFloat("vSpeed", m_Rigidbody2D.velocity.y);
+
+            if(detecting_ceil_time)
+            {
+                detect_ceil_time_left -= Time.deltaTime;
+                m_TouchWall = false;
+               
+                if(detect_ceil_time_left < 0)
+                {
+                    m_CanWallJump = false;
+                    detecting_ceil_time = false;
+                }
+            }
+
+           m_TouchCeil = false;
+           if(!detecting_ceil_time || detect_ceil_time_left < 0)
+           {
+                print("DETECT");
+               Vector3 abs_scale_ceilcheck = new Vector3(Math.Abs(m_CeilingCheck.localScale.x), m_CeilingCheck.localScale.y, m_CeilingCheck.localScale.z);
+               Collider2D[] colliders_ceil  = Physics2D.OverlapBoxAll(m_CeilingCheck.position, Vector3.Scale(abs_scale_tr, abs_scale_ceilcheck), m_WhatIsGround);
+               for (int i = 0; i < colliders_ceil.Length; i++)
+                {
+                   if(colliders_ceil[i].gameObject != gameObject)
+                    {
+                            
+                        if(!m_Grounded && colliders_ceil[i].gameObject.tag == "ClimbableCeiling")
+                        {                       
+                           m_TouchCeil     = true;
+                           m_CanDoubleJump = false;
+                           m_CanWallJump   = false;
+                           m_CanJump       = false;
+                        }
+                    }
+                    detect_ceil_time_left = detect_ceil_time;
+                }
+                // Set the vertical animation
+                m_Anim.SetFloat("vSpeed", m_Rigidbody2D.velocity.y);
+            }
+            if(m_TouchCeil)
+            {
+                if(m_HasTouchedCeiling)
+                {
+                    Debug.Log("Ceiling");
+                    m_Rigidbody2D.velocity = new Vector2(0, 0);
+                    m_Rigidbody2D.gravityScale = 0;
+                    m_HasTouchedCeiling = false;
+                    m_CanClimbCeil = true;
+
+                }
+            }
+            else
+            {
+                m_HasTouchedCeiling = true;
+                m_Rigidbody2D.gravityScale = 5;
+                m_CanClimbCeil = false;
+            }
+            
+
+
+            
         }
+
+        
 
 
         public void Move(float move, bool crouch, bool jump)
         {
-
 
             // If crouching, check to see if the character can stand up
             if (!crouch && m_Anim.GetBool("Crouch"))
@@ -157,7 +222,7 @@ using UnityEngine;
                 // The Speed animator parameter is set to the absolute value of the horizontal input.
                 m_Anim.SetFloat("Speed", Mathf.Abs(move));
 
-                    if((walljumping && move == 0) || (disable_input && !wall_push))
+                    if(((walljumping && move == 0) || (disable_input && !wall_push)) && !m_CanClimbCeil)
                     {
                         m_Rigidbody2D.velocity = new Vector2(walljump_coeff, m_Rigidbody2D.velocity.y);
                     }
@@ -248,6 +313,7 @@ using UnityEngine;
                     m_Grounded = false;
                     m_Anim.SetBool("Ground", false);
                     m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
+
                     //Debug.Log("Jump");  
                 }
             }
@@ -260,6 +326,17 @@ using UnityEngine;
                 m_Rigidbody2D.velocity = new_vel;
                 m_CanDoubleJump = false;
             }
+            else if(m_CanClimbCeil)
+            {
+                Debug.Log("AAAAAAAAAAAAAAAa");
+                m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, 0);
+                if(jump)
+                {
+                    Debug.Log("STOP");
+                    m_CanClimbCeil = false;
+                    detecting_ceil_time = true;
+                }
+            }
 
             if(disable_input)
             {
@@ -270,6 +347,9 @@ using UnityEngine;
                     disable_time_left = disable_time;
                 }
             }
+
+            
+
 
         }
 
@@ -286,7 +366,9 @@ using UnityEngine;
             Vector3 wall_check_scale = Vector3.Scale(transform.Find("WallCheck").localScale,transform.localScale);
             Gizmos.DrawWireCube(wall_check_pos, wall_check_scale);          
 
-
+            Vector3 ceil_check_pos = transform.Find("CeilingCheck").position;
+            Vector3 ceil_check_scale = Vector3.Scale(transform.Find("CeilingCheck").localScale,transform.localScale);
+            Gizmos.DrawWireCube(ceil_check_pos, ceil_check_scale);  
         }
 
         private void Flip()
