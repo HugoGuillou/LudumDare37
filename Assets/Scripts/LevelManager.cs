@@ -10,11 +10,13 @@ public class LevelManager : MonoBehaviour {
 
     private CharacterController player;
     private GameObject[] platformsBroke;
-	// Use this for initialization
-	void Start () {
+    private GameObject[] arrows;
+    // Use this for initialization
+    void Start () {
         player = FindObjectOfType<CharacterController>();
         platformsBroke = GameObject.FindGameObjectsWithTag("PlatformBroken");
-	}
+        arrows = GameObject.FindGameObjectsWithTag("Arrow");
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -38,6 +40,10 @@ public class LevelManager : MonoBehaviour {
         {
             platform.GetComponent<PlatformBrokenBehaviour>().Reset();
             platform.SetActive(true);
+        }
+        foreach (GameObject arrow in arrows)
+        {
+            Destroy(arrow);
         }
     }
 }
