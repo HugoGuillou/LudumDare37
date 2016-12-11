@@ -16,7 +16,7 @@ public class BubbleTrigger : MonoBehaviour {
 		
 	}
 
-    void OnTriggerEnter2D(Collision2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         if(other.gameObject.CompareTag("Player"))
         {
@@ -24,7 +24,7 @@ public class BubbleTrigger : MonoBehaviour {
         }
     }
 
-    void OnTriggerExit2D(Collision2D other)
+    void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
