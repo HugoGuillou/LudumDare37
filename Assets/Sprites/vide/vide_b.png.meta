@@ -1,11 +1,9 @@
 fileFormatVersion: 2
-guid: e732ab2f6a7a6df42bc36f99fbb8814d
-timeCreated: 1481501654
+guid: 7caa174237752ef49be9d10fe1954d5b
+timeCreated: 1481563951
 licenseType: Free
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: camionette_86x66_0
-    21300002: camionette_86x66_1
+  fileIDToRecycleName: {}
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -36,7 +34,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -62,41 +60,15 @@ TextureImporter:
     overridden: 0
   - buildTarget: Standalone
     maxTextureSize: 2048
-    textureFormat: 2
+    textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 1
+    overridden: 0
   spriteSheet:
     serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: camionette_86x66_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 86
-        height: 66
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: camionette_86x66_1
-      rect:
-        serializedVersion: 2
-        x: 86
-        y: 0
-        width: 86
-        height: 66
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
+    sprites: []
     outline: []
   spritePackingTag: 
   userData: 
