@@ -8,18 +8,18 @@ public class DeathWallsBehaviour : MonoBehaviour {
     public bool stop = false;
     public LevelManager levelManager;
 
-    private Vector3 wallMove;
     private Vector3 initialPos;
+    private Vector3 deplac;
 
     // Use this for initialization
     void Start () {
         levelManager = FindObjectOfType<LevelManager>();
-        wallMove = new Vector3(-wallSpeed, 0f, 0f);
         initialPos = transform.position;
         if(stop)
         {
             GetComponent<BoxCollider2D>().enabled = false;
         }
+        deplac = new Vector3(-wallSpeed, 0f, 0f);
     }
 	
 	// Update is called once per frame
@@ -40,7 +40,9 @@ public class DeathWallsBehaviour : MonoBehaviour {
 
     void Move()
     {
-        transform.position += wallMove;
+        //transform.position += wallMove;
+        transform.position += deplac * Time.deltaTime;
+
     }
 
     public void Activate()

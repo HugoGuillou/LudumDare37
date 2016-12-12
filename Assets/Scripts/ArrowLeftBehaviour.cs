@@ -24,7 +24,7 @@ public class ArrowLeftBehaviour : MonoBehaviour {
 
     void Move()
     {
-        transform.position += movement;
+        transform.position += movement * Time.deltaTime;
     }
 
     void OnCollisionEnter2D(Collision2D coll)
