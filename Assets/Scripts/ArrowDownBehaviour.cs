@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ArrowDownBehaviour : MonoBehaviour {
     
-    public float arrowSpeed = 0.1f;
+    public float arrowSpeed = 1.0f;
     public LevelManager levelManager;
 
     private Vector3 movement;
@@ -22,7 +22,7 @@ public class ArrowDownBehaviour : MonoBehaviour {
 
     void Move()
     {
-        transform.position += movement;
+        transform.position += movement * Time.deltaTime;
     }
 
     void OnCollisionEnter2D(Collision2D coll)
