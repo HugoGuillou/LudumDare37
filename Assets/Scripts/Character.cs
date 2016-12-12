@@ -99,7 +99,6 @@ using UnityEngine;
                 {
                     if (colliders_floor[i].gameObject != gameObject)
                     {
-                        Debug.Log("Ground");
                         if(colliders_floor[i].gameObject.tag == "MovingPlatorm")
                         {
                             m_OnPlatform = true;
@@ -150,7 +149,6 @@ using UnityEngine;
                                 m_TouchJumpWall = true;
                                 m_CanDoubleJump = false;
                                 m_CanWallJump = true;
-                                Debug.Log("GRAB");
                             }
                              else
                              {
@@ -196,7 +194,6 @@ using UnityEngine;
                 {
                    if(colliders_ceil[i].gameObject != gameObject)
                     {
-                        Debug.Log("Ceiling");
                         
                         if(!m_Grounded && (colliders_ceil[i].gameObject.tag == "JumpableWall" || colliders_ceil[i].gameObject.tag == "ClimbableCeiling"))
                         {                       
@@ -216,7 +213,6 @@ using UnityEngine;
             {
                 if(m_HasTouchedCeiling)
                 {
-                    Debug.Log("Ceiling");
                     m_Rigidbody2D.velocity = new Vector2(0, 0);
                     m_Rigidbody2D.gravityScale = 0;
                     m_HasTouchedCeiling = false;
