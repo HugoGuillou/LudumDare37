@@ -19,7 +19,7 @@ public class DeathWallsBehaviour : MonoBehaviour {
         {
             GetComponent<BoxCollider2D>().enabled = false;
         }
-        deplac = new Vector3(-wallSpeed, 0, 0);
+        deplac = new Vector3(-wallSpeed, 0f, 0f);
     }
 	
 	// Update is called once per frame

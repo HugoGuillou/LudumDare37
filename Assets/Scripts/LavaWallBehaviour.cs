@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LavaWallBehaviour : MonoBehaviour {
 
-    public float wallSpeed = 0.1f;
+    public float wallSpeed = 5.0f;
     public bool stop = false;
     public LevelManager levelManager;
 
@@ -38,7 +38,8 @@ public class LavaWallBehaviour : MonoBehaviour {
 
     void Move()
     {
-        transform.position += wallMove;
+        transform.position += wallMove * Time.deltaTime;
+        transform.position = new Vector2(Mathf.Sin(Time.time), transform.position.y);
     }
 
     public void Activate()
