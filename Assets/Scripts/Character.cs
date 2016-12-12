@@ -133,7 +133,7 @@ using UnityEngine;
                Collider2D[] colliders_wall  = Physics2D.OverlapBoxAll(m_WallCheck.position, Vector3.Scale(abs_scale_tr, abs_scale_wallcheck), m_WhatIsGround);
                for (int i = 0; i < colliders_wall.Length; i++)
                 {
-                   if(colliders_wall[i].gameObject != gameObject && !Input.GetButtonDown("Horizontal"))
+                   if(colliders_wall[i].gameObject != gameObject)
                     {   
 
                         if(!m_Grounded )
@@ -143,6 +143,7 @@ using UnityEngine;
                                 m_TouchJumpWall = true;
                                 m_CanDoubleJump = false;
                                 m_CanWallJump = true;
+                                Debug.Log("GRAB");
                             }
                              else
                              {
@@ -202,6 +203,7 @@ using UnityEngine;
                 }
                 // Set the vertical animation
                 m_Anim.SetFloat("vSpeed", m_Rigidbody2D.velocity.y);
+                m_Anim.SetBool("Climb",m_TouchCeil);
             }
             if(m_TouchCeil)
             {
@@ -222,7 +224,10 @@ using UnityEngine;
                 m_CanClimbCeil = false;
             }
 
+            
         }
+
+        
 
 
         public void Move(float move, bool crouch, bool jump)
@@ -320,9 +325,12 @@ using UnityEngine;
             // Wall Grab
            if(!m_Grounded && m_TouchJumpWall)
             {   
-
                 m_Rigidbody2D.velocity = new Vector2(0, 0);
-
+                m_Anim.SetBool("WallGrab", true);
+            }
+            else
+            {
+                m_Anim.SetBool("WallGrab", false);
             }
 
             wall_push = false;
@@ -335,7 +343,6 @@ using UnityEngine;
                     //Debug.Log("WallJump");
                     Vector2 force = new Vector2(0,  0);
                     walljumping = true;
-                    Debug.Log("WallJump");
                     m_Rigidbody2D.AddForce(new Vector2(0,800));  
                     
                     m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, 0);
@@ -390,7 +397,6 @@ using UnityEngine;
             //Ceiling Climb
             else if(m_CanClimbCeil)
             {
-                Debug.Log("AAAAAAAAAAAAAAAa");
                 m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, 0);
                 if(jump)
                 {
