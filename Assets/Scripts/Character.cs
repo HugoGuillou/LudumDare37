@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 public class Character : MonoBehaviour
 {
@@ -114,7 +114,7 @@ public class Character : MonoBehaviour
             Collider2D[] colliders_floor = Physics2D.OverlapCircleAll(m_GroundCheck.position, Mathf.Abs(m_GroundCheck.localScale.x * transform.localScale.x), m_WhatIsGround);
             for (int i = 0; i < colliders_floor.Length; i++)
             {
-                if (colliders_floor[i].gameObject != gameObject)
+                if (!colliders_floor[i].isTrigger && colliders_floor[i].gameObject != gameObject)
                 {
                     if(colliders_floor[i].gameObject.tag == "MovingPlatorm")
                     {
@@ -160,7 +160,11 @@ public class Character : MonoBehaviour
            Collider2D[] colliders_wall  = Physics2D.OverlapBoxAll(m_WallCheck.position, Vector3.Scale(abs_scale_tr, abs_scale_wallcheck), m_WhatIsGround);
            for (int i = 0; i < colliders_wall.Length; i++)
             {
-               if(colliders_wall[i].gameObject != gameObject)
+               if(colliders_wall[i].isTrigger && colliders_wall[i].gameObject.tag == "SceneLoad")
+                {
+                    SceneManager.LoadScene(colliders_wall[i].gameObject.name);
+                } 
+                else if(colliders_wall[i].gameObject != gameObject)
                 {   
 
                     if(!m_Grounded )
@@ -210,7 +214,7 @@ public class Character : MonoBehaviour
            Collider2D[] colliders_ceil  = Physics2D.OverlapBoxAll(m_CeilingCheck.position, Vector3.Scale(abs_scale_tr, abs_scale_ceilcheck), m_WhatIsGround);
            for (int i = 0; i < colliders_ceil.Length; i++)
             {
-               if(colliders_ceil[i].gameObject != gameObject)
+               if(!colliders_floor[i].isTrigger && colliders_ceil[i].gameObject != gameObject)
                 {
                     
                     if(!m_Grounded && (colliders_ceil[i].gameObject.tag == "JumpableWall" || colliders_ceil[i].gameObject.tag == "ClimbableCeiling"))
