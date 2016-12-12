@@ -124,5 +124,34 @@ public class PlatformMovingBehaviour : MonoBehaviour {
         stop = true;
         body.velocity = new Vector2(0f, 0f);
         transform.position = initialPos;
+        if (invert)
+        {
+            if (moveVertical)
+            {
+                //platformMove = new Vector3(0f, -movingSpeed, 0f);
+                platformSpeed = new Vector2(0f, -movingSpeed);
+            }
+            else
+            {
+                //platformMove = new Vector3(-movingSpeed, 0f, 0f);
+                platformSpeed = new Vector2(-movingSpeed, 0f);
+
+            }
+        }
+        else
+        {
+            if (moveVertical)
+            {
+                //platformMove = new Vector3(0f, movingSpeed, 0f);
+                platformSpeed = new Vector2(0f, movingSpeed);
+
+            }
+            else
+            {
+                //platformMove = new Vector3(movingSpeed, 0f, 0f);
+                platformSpeed = new Vector2(movingSpeed, 0f);
+
+            }
+        }
     }
 }

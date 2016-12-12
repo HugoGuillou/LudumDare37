@@ -21,6 +21,11 @@ public class SwitchArrowBehaviour : MonoBehaviour {
 		
 	}
 
+    public void Reset()
+    {
+        GetComponentInChildren<Animator>().SetBool("isOn", false);
+    }
+
     void OnTriggerStay2D(Collider2D other)
     {
         if(other.gameObject.CompareTag("Player"))

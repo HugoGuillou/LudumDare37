@@ -12,6 +12,7 @@ public class LevelManager : MonoBehaviour {
     private GameObject[] platformsBroke;
     private GameObject[] arrows;
     private GameObject[] platformsMove;
+    private GameObject[] switches;
 
     // Use this for initialization
     void Start () {
@@ -19,6 +20,7 @@ public class LevelManager : MonoBehaviour {
         platformsBroke = GameObject.FindGameObjectsWithTag("PlatformBroken");
         platformsMove = GameObject.FindGameObjectsWithTag("MovingPlatform");
         arrows = GameObject.FindGameObjectsWithTag("Arrow");
+        switches = GameObject.FindGameObjectsWithTag("SwitchArrow");
     }
 	
 	// Update is called once per frame
@@ -51,6 +53,10 @@ public class LevelManager : MonoBehaviour {
         foreach (GameObject arrow in arrows)
         {
             Destroy(arrow);
+        }
+        foreach (GameObject switchArrow in switches)
+        {
+            switchArrow.GetComponent<SwitchArrowBehaviour>().Reset();
         }
     }
 }
