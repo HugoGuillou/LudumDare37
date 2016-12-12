@@ -42,7 +42,7 @@ public class DeathWallsBehaviour : MonoBehaviour {
     {
         //transform.position += wallMove;
         transform.position += deplac * Time.deltaTime;
-        transform.position = new Vector2(transform.position.x, Mathf.Sin(Time.time));
+
     }
 
     public void Activate()

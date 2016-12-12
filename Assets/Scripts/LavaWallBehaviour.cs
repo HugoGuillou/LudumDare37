@@ -39,7 +39,6 @@ public class LavaWallBehaviour : MonoBehaviour {
     void Move()
     {
         transform.position += wallMove * Time.deltaTime;
-        transform.position = new Vector2(Mathf.Sin(Time.time), transform.position.y);
     }
 
     public void Activate()
