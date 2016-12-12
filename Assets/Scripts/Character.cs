@@ -10,6 +10,13 @@ using UnityEngine;
         [SerializeField] private bool m_AirControl = false;                 // Whether or not a player can steer while jumping;
         [SerializeField] private LayerMask m_WhatIsGround;                  // A mask determining what is ground to the character
 
+        public AudioClip[] walkSounds;
+        public AudioClip[] wallBar;
+        public AudioClip[] jump;
+        public AudioClip[] doubleJump;
+        public AudioClip climb;
+        public AudioClip land;
+
         private Transform m_GroundCheck;    // A position marking where to check if the player is grounded.
         const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
 
@@ -92,7 +99,6 @@ using UnityEngine;
                 {
                     if (colliders_floor[i].gameObject != gameObject)
                     {
-                        Debug.Log("Ground");
                         if(colliders_floor[i].gameObject.tag == "MovingPlatorm")
                         {
                             m_OnPlatform = true;
@@ -143,7 +149,6 @@ using UnityEngine;
                                 m_TouchJumpWall = true;
                                 m_CanDoubleJump = false;
                                 m_CanWallJump = true;
-                                Debug.Log("GRAB");
                             }
                              else
                              {
@@ -189,7 +194,6 @@ using UnityEngine;
                 {
                    if(colliders_ceil[i].gameObject != gameObject)
                     {
-                        Debug.Log("Ceiling");
                         
                         if(!m_Grounded && (colliders_ceil[i].gameObject.tag == "JumpableWall" || colliders_ceil[i].gameObject.tag == "ClimbableCeiling"))
                         {                       
@@ -209,7 +213,6 @@ using UnityEngine;
             {
                 if(m_HasTouchedCeiling)
                 {
-                    Debug.Log("Ceiling");
                     m_Rigidbody2D.velocity = new Vector2(0, 0);
                     m_Rigidbody2D.gravityScale = 0;
                     m_HasTouchedCeiling = false;
